@@ -14,15 +14,15 @@ body {
   flex: 0 0 300px;
   margin: 0 15px 0 0;
 }
-#chessground-examples menu .a {
+#chessground-examples menu a {
   display: block;
   cursor: pointer;
   padding: 5px 15px;
 }
-#chessground-examples menu .a:hover {
+#chessground-examples menu a:hover {
   background: #333;
 }
-#chessground-examples menu .a.active {
+#chessground-examples menu a.active {
   border-left: 5px solid #b0b0b0;
 }
 #chessground-examples section {

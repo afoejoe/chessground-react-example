@@ -1,40 +1,39 @@
-import React, { FC, useLayoutEffect, useRef } from 'react';
+import { FC, useLayoutEffect, useRef } from 'react';
 import '@/assets/chessground.base.css';
 import '@/assets/chessground.brown.css';
 import '@/assets/chessground.cburnett.css';
 import '@/assets/examples.css';
 import { Chessground as CG } from 'chessground';
 import { Config } from 'chessground/config';
-import { Chess } from 'chess.js';
-import { playOtherSide, toDests } from '@/lib/utils';
+import { useCG } from '@/hooks/useCG';
 
 type ChessgroundProps = {
   width?: number;
   height?: number;
   config?: Config;
+  keyField: string;
 };
 
-export const Chessground: FC<ChessgroundProps> = ({ width = 500, height = 500, config }) => {
-  const chessgroundRef = useRef<HTMLDivElement>(null);
+export const Chessground: FC<ChessgroundProps> = ({ width = 500, height = 500, config, keyField }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { addCG, cgs } = useCG();
 
   useLayoutEffect(() => {
-    if (chessgroundRef.current) {
-      const chess = new Chess();
+    console.log({
+      ref,
+      cgs
+    });
 
-      const cg = CG(chessgroundRef.current, {
-        ...config,
-        movable: {
-          free: false,
-          color: 'both',
-          dests: toDests(chess)
-        }
-      });
-
-      cg.set({
-        movable: { events: { after: playOtherSide(cg, chess) } }
-      });
+    if (ref?.current && !cgs[keyField]) {
+      const cg = CG(ref.current, config);
+      addCG(cg, keyField);
     }
-  }, [config]);
 
-  return <div style={{ width, height }} className="cg-wrap" ref={chessgroundRef} />;
+    return () => {
+      cgs[keyField]?.destroy();
+      delete cgs[keyField];
+    };
+  }, [addCG, cgs, config, keyField]);
+
+  return <div style={{ width, height }} className="cg-wrap" ref={ref} />;
 };
